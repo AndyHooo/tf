@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>spring-task-stock-tag config</description>
+
+	<!-- 唐时涛  个股概念标签 -->
+	<bean id="cmsStockConceptTask" class="com.ytwl.cms.asyn.task.stocktags.CmsStockConceptTask"></bean>
+	<!-- 唐时涛 个股市场类标签(存在一个webdriver的定时任务需分离) -->
+	<bean id="stockMarketTagsTask" class="com.ytwl.cms.asyn.task.stocktags.StockMarketTagsTask">
+	</bean>
+	<!-- 唐时涛 个股标签统计数据 -->
+	<bean id="stockTagsTask" class="com.ytwl.cms.asyn.task.stocktags.StockTagsTask">
+	</bean>
+
+	<task:scheduler id="stockRelationshipTaskScheduler"
+		pool-size="10" />
+
+	<task:scheduled-tasks scheduler="stockRelationshipTaskScheduler">
+
+		<task:scheduled ref="cmsStockConceptTask" method="dealStockMsgForConceptHoldDays"
+			cron="0 05 21 * * ?" />
+		<task:scheduled ref="cmsStockConceptTask" method="dealStockConceptMainTask"
+			cron="0 55 21 * * ?" />
+		<task:scheduled ref="cmsStockConceptTask" method="dealStockMsgForConceptMainTask"
+			cron="0 0/2 * ? * MON-FRI" />
+			<!-- cron="0 0/1 * * * MON-FRI" -->
+
+		<task:scheduled ref="stockMarketTagsTask" method="updateAllStockMarketTags"
+			cron="0 35 22 * * ?" />
+		<task:scheduled ref="stockMarketTagsTask" method="updateOnceAWeek"
+			cron="0 0 3 ? * FRI" />
+		<task:scheduled ref="stockMarketTagsTask" method="dealSomeStockOnceADay"
+			cron="0 35 20 * * ?" />
+		
+		<task:scheduled ref="stockMarketTagsTask" method="dealCrawlerDataEveryTime"
+			cron="0 0/1 * * * ?" />
+		<task:scheduled ref="stockMarketTagsTask" method="dealStockTopOrDownEveryTime"
+			cron="0 0/5 9-15 ? * MON-FRI" />
+
+		<task:scheduled ref="stockTagsTask" method="dealStockTagsHistoryDataToDb"
+			cron="15 35 23 * * ?" />
+		<task:scheduled ref="stockTagsTask" method="dealStockTagsJsonDataToDb"
+			cron="15 10 23 * * ?" />
+	</task:scheduled-tasks>
+
+</beans>

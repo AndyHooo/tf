@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	
+	<description>spring-task-cmb config</description>
+	
+	<!-- 朱尚军 -->
+	<!-- 要闻精选定时任务 -->
+	<bean id="cmbFocusSyncTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmbFocusInformationTask" />
+				<property name="targetMethod" value="cmbFocusSyncTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="startDelay" value="1000"></property>
+		<property name="cronExpression">
+			<value>0/2 * * * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 朱尚军 -->
+	<!-- 自选股资讯定时任务 -->
+	<bean id="cmbSelfSelectionInformationSyncTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmbSelfSelectionInformationTask" />
+				<property name="targetMethod" value="cmbSelfSelectionInformationSyncTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="startDelay" value="1000"></property>
+		<property name="cronExpression">
+			<value>0/2 * * * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 朱尚军 -->
+	<!-- 自选股资讯自选缓存淘汰定时任务 -->
+	<bean id="removeInvalidSelfSelectionKeyTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmbRedisExpireTask" />
+				<property name="targetMethod" value="removeInvalidSelfSelectionKey" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 1 0 * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 文玉棣 -->
+	<!-- F10首页信息存入redis定时任务 -->
+	<bean id="cmbF10InformationToRedisTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmbF10InformationToRedisTask" />
+				<property name="targetMethod" value="cmbF10InformationSyncTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 25 0/2 * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 文玉棣 -->
+	<!-- 预知未来详情页存入redis定时任务 -->
+	<bean id="cmbFutureDetailToRedisTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmbFutureDetailToRedisTask" />
+				<property name="targetMethod" value="cmbFutureDetailSyncTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>30 10 09-19 * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 文玉棣 -->
+	<!-- 个股资讯列表页（部分）存入redis定时任务 -->
+	<bean id="cmbStockInfoToRedisTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmbStockInformationTask" />
+				<property name="targetMethod" value="cmbStockInformationSyncTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 5/5 * * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 文玉棣 -->
+	<bean id="seekingVoteTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="seekingVoteTask" />
+				<property name="targetMethod" value="execute" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>5/30 * * * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 文玉棣 -->
+	<!-- 招证求一票概念回测数据落地数据库 -->
+	<bean id="seekingVoteBackTraceTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="seekingVoteTask" />
+				<property name="targetMethod" value="syncBackTraceToDb" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>5 1/1 * * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 朱尚军 -->
+	<!-- 招行每日新增数据统计和发送邮件-->
+	<bean id="statisticsNewsQuantityTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="statisticsNewsQuantityTask" />
+				<property name="targetMethod" value="countQuantity" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 10 0 * * ?</value>
+		</property>
+	</bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cmbFocusSyncTaskQuartz"/>
+				<ref bean="cmbSelfSelectionInformationSyncTaskQuartz"/>
+				<ref bean="removeInvalidSelfSelectionKeyTaskQuartz"/>
+				<ref bean="cmbF10InformationToRedisTaskQuartz"/>
+				<ref bean="cmbFutureDetailToRedisTaskQuartz"/>
+				<ref bean="cmbStockInfoToRedisTaskQuartz"/>
+				<ref bean="seekingVoteTaskQuartz"/>
+				<ref bean="seekingVoteBackTraceTaskQuartz"/>
+				<ref bean="statisticsNewsQuantityTaskQuartz"/>
+			</list>
+		</property>
+	</bean>
+</beans>

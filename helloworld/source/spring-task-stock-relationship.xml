@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>spring-task-stock-relationship config</description>
+	
+	<!-- 每日记录基本面和股票的关系定时任务  -->
+	<bean id="StockAndBasicPlaneRelationTask" class=" com.ytwl.cms.asyn.task.relation.StockAndBasicPlaneRelationTask"></bean>
+	
+	
+	<!--唐时涛    每日记录个股概念和股票的关系定时任务  -->
+	<bean id="strategyStockRelationTask" class=" com.ytwl.cms.asyn.task.StrategyStockRelationTask"></bean>
+	
+	<task:scheduler id="stockRelationshipTaskScheduler" pool-size="4"/>
+	<task:scheduled-tasks scheduler="stockRelationshipTaskScheduler">
+		 <task:scheduled ref="stockAndCmsTopicCreateRelationMission" method="fixedTimeCalcStockAndTopicCaler" cron="0 0 5 * * ?"/>
+		 <task:scheduled ref="StockAndBasicPlaneRelationTask" method="recordDailyData" cron="0 0 7 * * ?"/> 
+		 <task:scheduled ref="strategyStockRelationTask" method="produceStockConceptRelation" cron="0 0 2 * * ?"/> 
+		 <!-- 每晚23点执行 k线数据检测 -->
+		 <task:scheduled ref="stockDataDetectionTask" method="compareStockKLine" cron="0 0 23 * * ?"/>
+	</task:scheduled-tasks>
+	
+</beans>

@@ -1,0 +1,570 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>common task config</description>
+	<bean id="individualShareNewsTask" class="com.ytwl.cms.asyn.task.IndividualShareNewsTask"></bean>
+	<bean id="barrageCrawlerTask" class="com.ytwl.cms.asyn.task.BarrageCrawlerTask"></bean>
+	<bean id="talentRecommendTask" class="com.ytwl.cms.asyn.task.TalentRecommendTask"></bean>
+	<bean id="monsterStockTask" class="com.ytwl.cms.asyn.task.monster.MonsterStockFilter"></bean>
+	<bean id="focusTodayRecommendRead" class="com.ytwl.cms.asyn.task.FocusTodayMessageFilterTask"></bean>
+	<bean id="stockReportListTask" class="com.ytwl.cms.asyn.task.geek.StockReportListTask"></bean>
+
+
+	<!-- 今日必知推荐阅读数据更新 -->
+	<bean id="focusTodayRecommendReadBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="focusTodayRecommendRead" />
+				<property name="targetMethod" value="grapData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>10 05 17 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 骆培岩 -->
+	<!-- 妖股 -->
+	<bean id="monsterStockBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="monsterStockTask" />
+				<property name="targetMethod" value="getGgData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 05 15 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 智能推荐 -->
+	<bean id="talentRecommendBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="talentRecommendTask" />
+				<property name="targetMethod" value="getNewTopicData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>20 06 15 * * ?</value>
+		</property>
+	</bean>
+
+
+	<!-- 抓取雪球个股资讯 -->
+	<bean id="buildIndividualShareNewsTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="individualShareNewsTask" />
+				<property name="targetMethod" value="buildIndividualShareNews" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<!-- 每天的 5点触发 -->
+			<value>0 0 5 * * ?</value>
+			<!-- <value>0 20 16 * * ?</value> -->
+		</property>
+	</bean>
+
+	<!-- 抓取新浪微博股评 -->
+	<bean id="buildSinaWeiboStockCommentsTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="barrageCrawlerTask" />
+				<property name="targetMethod" value="buildSinaWeiboStockComments" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<!-- 每四十分钟执行一次 -->
+			<value>0 0/15 * * * ?</value>
+		</property>
+	</bean>
+
+
+
+
+	<!-- 抓取停复牌 -->
+	<bean id="buildSrTradingTipsTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="buildSrTradingTips" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<!-- 每天的 4点半触发 -->
+			<!--<value>0 0/1 * * * ?</value> -->
+			<value>0 0/5 * * * ?</value>
+			<!-- <value>00 15 11 * * ?</value> -->
+			<!-- <value>00 00 18 * * ?</value> -->
+		</property>
+	</bean>
+
+
+	<bean id="stockChangeTask" class="com.ytwl.cms.asyn.task.StockChangeTask"></bean>
+	<!-- 朱尚军 -->
+	<bean id="stockChangeQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="stockChangeTask" />
+				<property name="targetMethod" value="sendNotice" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0/30 * * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 朱尚军 -->
+	<bean id="stockChangeStatisticsQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="stockChangeStatisticsTask" />
+				<property name="targetMethod" value="createStatisticsReporting" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 05 15 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 朱尚军 -->
+	<bean id="stockChangeAnalysisQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="stockChangeAnalysisTask" />
+				<property name="targetMethod" value="createStockDataAnalysis" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0/10 * * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 朱尚军 -->
+	<bean id="stockChangeAnalysisDataQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="stockChangeAnalysisTask" />
+				<property name="targetMethod" value="createStockDataAnalysisData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 5 0 * * ?</value>
+		</property>
+	</bean>
+
+
+
+	<!-- 定时查看cms数据是否重复 -->
+	<bean id="fixTimeCheckCmsDataOverQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="fixTimeGrabManagerImpl" />
+				<property name="targetMethod" value="getOverCmsContentData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 骆培岩 -->
+	<!-- FiDi早报 -->
+	<bean id="FiDiMorningNewsBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="FiDiMorningNews" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 30 07 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 麦灿文 -->
+	<!-- 同步资讯到es中 -->
+	<bean id="SyncToESBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="elasticSearchTask" />
+				<property name="targetMethod" value="sync" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<!-- 每天中午12点开始更新 -->
+			<value>00 00 12 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="updateCmsFidUserStatusBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsFidUserTask" />
+				<property name="targetMethod" value="checkIsExpire" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<!-- 每三个小时更新一次 -->
+			<value>00 00 0/3 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 文玉棣 -->
+	<!-- hybridInfo智投直播每天清理过时数据 -->
+	<bean id="delHybridObsoleteInfoBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="hybridInfoTask" />
+				<property name="targetMethod" value="delObsoleteData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 30 03 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 文玉棣 -->
+	<!-- hybridInfo智投直播定时更新track -->
+	<bean id="hybridInfoUpdateTrackBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="hybridInfoTask" />
+				<property name="targetMethod" value="updateTrack" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 */2 09-15 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 朱尚军 -->
+	<bean id="dzhTopicSyncBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="dzhTopicSyncTask" />
+				<property name="targetMethod" value="sync" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>13 0/10 * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 筹码图 -->
+	<!-- luoyi 无特殊需求 -->
+	<bean id="countersChartTask"
+		class="com.ytwl.cms.asyn.task.countersChart.service.Impl.CountersChartServiceImpl"></bean>
+	<!-- 筹码图 每日更新 -->
+	<bean id="countersChartTaskTaskBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="countersChartTask" />
+				<property name="targetMethod" value="countersChartCalculationTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 5 17 * * ?</value>
+		</property>
+	</bean>
+
+	<!--监控基本面接口 -->
+	<!-- luoyi 无特殊需求 -->
+	<bean id="companyTemMonitorTask"
+		class="com.ytwl.cms.asyn.task.interfaceMonitoring.CompanyTemMonitor"></bean>
+	<!-- 监控基本面接口 -->
+	<bean id="companyTemMonitorTaskBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="companyTemMonitorTask" />
+				<property name="targetMethod" value="companyTemMonitorTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 文玉棣 -->
+	<!-- 每天零点清除预知未来排名 -->
+	<bean id="cmsPredictFutureCleanRankBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="predictFutureRankTask" />
+				<property name="targetMethod" value="cleanRankTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>15 05 00 * * ?</value>
+		</property>
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+
+				<!-- <ref bean="economicsDataGeneratorTiggerBean" /> -->
+				<!--<ref bean="economicsEventGeneratorTiggerBean" /> -->
+
+				<ref bean="buildSrTradingTipsTiggerBean" />
+				<ref bean="stockChangeQuartz" />
+				<ref bean="stockChangeStatisticsQuartz" />
+				<ref bean="stockChangeAnalysisQuartz" />
+				<!-- 废弃的<ref bean="stockChangeAnalysisDataQuartz" /> -->
+				<!--<ref bean="FiDiMorningNewsBean" /> -->
+				<!-- <ref bean="fixTimeCheckCmsDataOverQuartz" /> -->
+				<!-- <ref bean="stockBaseKlineDataInitTaskQuartz" /> -->
+				<ref bean="stockBaseKlineDataDailyTaskQuartz" />
+				<!--<ref bean="stockBaseKlineDataBsbtdTaskQuartz" /> -->
+				<ref bean="stockBackTraceMessageTaskQuartz" />
+
+				<ref bean="buildIndividualShareNewsTiggerBean" />
+				<ref bean="buildSinaWeiboStockCommentsTiggerBean" />
+
+				<ref bean="talentRecommendBean" />
+				<ref bean="monsterStockBean" />
+				<ref bean="focusTodayRecommendReadBean" />
+
+				<ref bean="profitLmDailyTaskQuartz" />
+				<ref bean="SyncToESBean" />
+
+
+				<ref bean="bulidEventDriveDataTaskQuartz" />
+				<ref bean="topicInfoFinanceEventSequenceTaskQuartz" />
+				<ref bean="redisSync2DBTaskQuartz" />
+				<ref bean="stockReportToRedisTaskQuartz" />
+				<ref bean="stockReportDeleteTaskQuartz" />
+
+				<ref bean="syncWindStockDataTaskQuartz" />
+				<ref bean="syncWindStockDataTaskQuartz2" />
+
+				<ref bean="delHybridObsoleteInfoBean" />
+				<ref bean="hybridInfoUpdateTrackBean" />
+				<ref bean="dzhTopicSyncBean" />
+
+				<ref bean="foreseeFutureStockChgTaskQuartz" />
+
+				<ref bean="ashareFollowBankerTaskBean" />
+
+				<ref bean="proprietaryTopicNewsTaskQuartz" />
+
+				<ref bean="countersChartTaskTaskBean" />
+				<ref bean="companyTemMonitorTaskBean" />
+				<ref bean="eventChgTaskQuartz" />
+
+				<ref bean="cmsYanBaoTaskgrabBean" />
+				<ref bean="cmsYanBaotargetPriceExRightTaskBean" />
+				<ref bean="cmsYanBaorepairNewsYanbaoPriceTaskBean" />
+				<ref bean="cmsYanBaoafterIncreaseTaskBean" />
+				<ref bean="cmsYanBaoTaskpossibleIncreaseBean" />
+
+				<ref bean="LurkArtifactNewsAutoYanbaoServiceTaskautoSecuCold" />
+				<ref bean="LurkArtifactNewsAutoYanbaoServiceTaskautoPossibleIncrease" />
+				<ref bean="LurkArtifactNewsAutoYanbaoServiceTaskautoSuccessRate" />
+
+				<ref bean="stockQuotationNewsForKLineTaskQuartz" />
+
+				<ref bean="cmsContentObserverTaskQuartz" />
+				<ref bean="cmsPredictFutureCleanRankBean" />
+
+				<!-- <ref bean="onceCreateStockDataAnalysisTaskQuartz" /> <ref bean="rbsDataDealTaskTaskQuartz"/> -->
+			</list>
+		</property>
+	</bean>
+
+	<!-- 第一秒 -->
+	<bean id="CmsContentsReleaseTask" class="com.ytwl.cms.asyn.task.CmsContentsReleaseTask"></bean>
+
+	<bean id="CmsNewFinancialCalendarTask" class="com.ytwl.cms.asyn.task.CmsNewFinancialCalendarTask"></bean>
+
+	<!-- 田成局 -->
+	<!-- 更新公司气质股票表定时任务 -->
+	<bean id="CompanyTemperamentStockTask" class="com.ytwl.cms.asyn.task.CompanyTemperamentStockTask"></bean>
+	<!-- 田成局 -->
+	<!-- 更新公司气质表定时任务 -->
+	<bean id="CompanyTemperamentTask" class="com.ytwl.cms.asyn.task.CompanyTemperamentTask"></bean>
+	<!-- 查询事件日历插入到实时个股定时任务 -->
+	<bean id="RealTimeStockTask" class=" com.ytwl.cms.asyn.task.RealTimeStockTask"></bean>
+	<!-- 查询事件日历插入到今日必知定时任务 -->
+	<bean id="FinanceEventTask" class=" com.ytwl.cms.asyn.task.FinanceEventTask"></bean>
+	<!-- 个股资讯给App做Push定时任务 -->
+	<bean id="PersonalizedPushTask" class=" com.ytwl.cms.asyn.task.app.PersonalizedPushTask"></bean>
+
+	<!-- 求一基 -->
+	<bean id="AskForFoundTask" class="com.ytwl.cms.asyn.task.AskForFoundTask"></bean>
+
+	<!--更新股票名称 -->
+	<bean id="UpdateByNameTask" class="com.ytwl.cms.update.task.UpdateByName"></bean>
+
+	<!--更新股票名称 -->
+	<bean id="UpdateByFinancingTask" class="com.ytwl.cms.asyn.task.Update_Financing"></bean>
+
+	<!--更新股票名称 -->
+	<bean id="Getggcqcx" class="com.ytwl.cms.asyn.task.Getggcqcx"></bean>
+
+	<!--个股公告匹配个股驱动因子 -->
+	<bean id="Get_Eastmoney" class="com.ytwl.cms.asyn.task.oneshare.get.Get_Eastmoney"></bean>
+
+	<!-- 每天记录主题指数排名前十的主题 -->
+	<bean id="TopicInTopTenTask" class=" com.ytwl.cms.asyn.task.dragonStock.TopicInTopTenTask"></bean>
+
+	<!--研报 -->
+	<bean id="research_report" class=" com.ytwl.cms.asyn.task.research_report.Get_Research"></bean>
+
+	<!--龙虎榜潜伏神器 -->
+	<bean id="LhLatentHallowsTask"
+		class="com.ytwl.cms.asyn.task.latentHallows.LhLatentHallowsTaskVersion2"></bean>
+
+	<task:scheduler id="defaultTaskScheduler" pool-size="10" />
+	<task:scheduled-tasks scheduler="defaultTaskScheduler">
+
+		<!-- 定时发布资讯 -->
+		<task:scheduled ref="CmsContentsReleaseTask" method="publishStart"
+			fixed-delay="10000" />
+		<!-- 财经数据二 解读 -->
+		<task:scheduled ref="CmsNewFinancialCalendarTask"
+			method="sysnData" fixed-delay="10000" />
+		<!-- 更新公司气质股票表定时任务 -->
+		<task:scheduled ref="CompanyTemperamentStockTask"
+			method="updateCompanyTemperamentStock" cron="0 0 1 * * ?" />
+		<!-- 更新公司气质表定时任务 -->
+		<task:scheduled ref="CompanyTemperamentTask" method="updateCompanyTemperament"
+			cron="0 0 6 * * ?" />
+		<!-- 更新气质关联最新消息任务 -->
+		<task:scheduled ref="CompanyTemperamentTask" method="updateToNewest"
+			cron="0 * * * * ?" />
+		<!-- 查询事件日历插入到实时个股定时任务 -->
+		<task:scheduled ref="RealTimeStockTask"
+			method="insertRealTimeStockTaskByEventCalendar" cron="0 0 13 * * ?" />
+		<!-- 查询停复牌提示插入到实时个股定时任务 -->
+		<task:scheduled ref="RealTimeStockTask"
+			method="insertRealTimeStockTaskByStopResumption" cron="0 0-25/5 9 * * ?" />
+		<!-- 查询股东大会预告插入到实时个股定时任务 -->
+		<task:scheduled ref="RealTimeStockTask"
+			method="insertRealTimeStockTaskByShareholdersMeetingNotice" cron="0 30 17 * * ?" />
+		<!-- 查询新股日历插入到实时个股定时任务 -->
+		<task:scheduled ref="RealTimeStockTask"
+			method="insertRealTimeStockTaskByNewStockCalendar" cron="0 0 8 * * ?" />
+		<!--抓取限售解禁插入到实时个股定时任务 -->
+		<task:scheduled ref="RealTimeStockTask"
+			method="insertRealTimeStockTaskByRestrictedUnlocking" cron="0 30 7 * * ?" />
+		<!-- 抓取大宗交易插入到实时个股定时任务 -->
+		<task:scheduled ref="RealTimeStockTask" method="insertRealTimeStockTaskByBigDeals"
+			cron="0 0/10 16-19 * * ?" />
+		<task:scheduled ref="RealTimeStockTask"
+			method="insertRealTimeStockTaskByBigDealsChangeSign" cron="0 10 20 * * ?" />
+		<!-- 查询事件日历插入到今日必知定时任务 -->
+		<task:scheduled ref="FinanceEventTask" method="insertFocusTodayByFinanceEvent"
+			cron="0 58 9 * * ?" />
+
+		<!-- 个股资讯给App做Push定时任务 -->
+		<task:scheduled ref="PersonalizedPushTask" method="personalizedPushForOptionalStock"
+			cron="0 0 19 * * ?" />
+
+		<!-- 股民晚餐Push定时任务 -->
+		<task:scheduled ref="PersonalizedPushTask" method="pushGuMinDinner"
+			cron="0 45 21 * * ?" />
+
+		<!-- 盘前十二小时Push定时任务 -->
+		<task:scheduled ref="PersonalizedPushTask" method="pushPanQian12Hours"
+			cron="0 35 8 * * ?" />
+
+		<!-- 午间速递Push定时任务 -->
+		<task:scheduled ref="PersonalizedPushTask" method="pushNoonMsg"
+			cron="0 05 12 * * ?" />
+
+		<!-- 每天记录主题指数排名前20的主题 -->
+		<task:scheduled ref="TopicInTopTenTask" method="recordDailyData"
+			cron="0 0 20 * * MON-FRI" />
+
+		<!-- 刷新实时龙头主题，实时龙头股票 -->
+		<task:scheduled ref="TopicInTopTenTask" method="realTimeDragonTopic"
+			cron="0 0/5 9-14 * * MON-FRI" />
+
+		<!-- 刷新实时龙头主题，实时龙头股票 收盘以后多跑一次 -->
+		<task:scheduled ref="TopicInTopTenTask" method="realTimeDragonTopic"
+			cron="0 1 15 * * MON-FRI" />
+
+		<!-- 收盘后刷新多日龙头主题，多日龙头股票 -->
+		<task:scheduled ref="TopicInTopTenTask" method="severalDaysDragonTopic"
+			cron="0 1 15 * * MON-FRI" />
+
+		<!-- 收盘后保存当日龙头主题，龙头股票 -->
+		<task:scheduled ref="TopicInTopTenTask" method="recordDragonTopicAndStockOfToday"
+			cron="0 5 15 * * MON-FRI" />
+
+		<!--龙虎榜潜伏神器 -->
+		<task:scheduled ref="LhLatentHallowsTask" method="LhLatentHallowsMissionStart"
+			cron="0 5 15 * * MON-FRI" />
+		<task:scheduled ref="LhLatentHallowsTask" method="flashTotalZfMission"
+			cron="0/5 * 9-15 * * MON-FRI" />
+		<task:scheduled ref="LhLatentHallowsTask"
+			method="LhLatentHallowsMissionPrimaryAddStart" cron="0 0 18 * * MON-FRI" />
+		<task:scheduled ref="LhLatentHallowsTask" method="belongTopicMission"
+			cron="0 10 12,15 * * MON-FRI" />
+		<!-- 求一基 -->
+		<task:scheduled ref="AskForFoundTask" method="updateFoundNewData"
+			cron="0 0 02 * * ?" />
+
+		<!--更新股票名称 -->
+		<task:scheduled ref="UpdateByNameTask" method="job"
+			cron="0 0 7 * * ?" />
+		<!--更新股票融资融券特性 -->
+		<task:scheduled ref="UpdateByFinancingTask" method="job"
+			cron="0 0 6 * * ?" />
+		<!--个股公告匹配个股标题驱动因子 -->
+		<task:scheduled ref="Get_Eastmoney" method="job"
+			cron="0/15 * * * * ?" />
+		<!--更新公告 -->
+		<task:scheduled ref="Getggcqcx" method="getggcqcx"
+			cron="0 30 8 * * ?" />
+
+	</task:scheduled-tasks>
+</beans>

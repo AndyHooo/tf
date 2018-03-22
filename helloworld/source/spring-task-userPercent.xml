@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>userPercent task config guilixian</description>
+	
+	<bean id="userPercentTask" class="com.fid.statistics.task.UserPercentTask"></bean>
+	<!--抓取主题基金代码 -->
+	<bean id="statisticUserPercentTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="userPercentTask" />
+				<property name="targetMethod" value="statisticUserPercent" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <!-- 23:55 --> 
+           <value>0 55 23 * * ?</value>
+        </property>   
+	</bean>
+	
+	
+	<!--注册定时任务-->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<property name="triggers">  
+            <list>
+				<ref bean="statisticUserPercentTriggerBean" />
+			</list>  
+		</property>  
+	</bean>
+</beans>

@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='utf-8'?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd             http://www.springframework.org/schema/task              http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>spring-task-stock-relationship config</description>
+
+
+	<bean class=" com.ytwl.cms.asyn.task.relation.StockAndBasicPlaneRelationTask"
+		id="StockAndBasicPlaneRelationTask" />
+
+
+
+	<bean class=" com.ytwl.cms.asyn.task.StrategyStockRelationTask"
+		id="strategyStockRelationTask" />
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="fixedTimeCalcStockAndTopicCalerTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="false" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="stockAndCmsTopicCreateRelationMission" />
+						<entry key="targetMethod" value="fixedTimeCalcStockAndTopicCaler" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression" value="0 0 5 * * ?" />
+		<property name="misfireInstruction" value="2" />
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="recordDailyDataTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="false" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="StockAndBasicPlaneRelationTask" />
+						<entry key="targetMethod" value="recordDailyData" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression" value="0 0 7 * * ?" />
+		<property name="misfireInstruction" value="2" />
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="produceStockConceptRelationTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="false" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="strategyStockRelationTask" />
+						<entry key="targetMethod" value="produceStockConceptRelation" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression" value="0 0 2 * * ?" />
+		<property name="misfireInstruction" value="2" />
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="compareStockKLineTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="false" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="stockDataDetectionTask" />
+						<entry key="targetMethod" value="compareStockKLine" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression" value="0 0 23 * * ?" />
+		<property name="misfireInstruction" value="2" />
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="exposeSchedulerInRepository" value="true" />
+		<property name="autoStartup" value="true" />
+		<property name="startupDelay" value="10" />
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
+		<property name="configLocation"
+			value="classpath:/ytwl-cms-admin-properties/quartz.properties" />
+		<property name="jobFactory">
+			<bean class="com.ytwl.cms.quartz.AutoWiringSpringBeanJobFactory" />
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="fixedTimeCalcStockAndTopicCalerTrigger" />
+				<ref bean="recordDailyDataTrigger" />
+				<ref bean="produceStockConceptRelationTrigger" />
+				<ref bean="compareStockKLineTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>

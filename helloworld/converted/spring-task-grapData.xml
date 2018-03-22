@@ -1,0 +1,1357 @@
+<?xml version='1.0' encoding='utf-8'?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd             http://www.springframework.org/schema/task              http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<bean class="com.ytwl.cms.asyn.task.PublishToXueQiuTask" id="publishToXueQiuTask" />
+	<bean class="com.ytwl.cms.asyn.task.ZtDataTask" id="ztDataTask" />
+	<bean class="com.ytwl.cms.asyn.task.MoneyFlowTask" id="moneyFlowTask" />
+	<bean class="com.ytwl.cms.asyn.task.RongQuanTask" id="rzrqTask" />
+	<bean class="com.ytwl.cms.asyn.task.LHRankShopTask" id="lHRankShopTask" />
+	<bean class="com.ytwl.cms.asyn.task.DealLhRankHistoryTask" id="dealLhRankHistoryTask" />
+	<bean class="com.ytwl.cms.asyn.task.SinaNewsGrapTask" id="SinaCjTask" />
+	<bean class="com.ytwl.cms.asyn.task.RobotForIndustryTask" id="RobotTradeTask" />
+	<bean class="com.ytwl.cms.asyn.task.SingleStockLhRobotTask" id="SingleStock" />
+	<bean class="com.ytwl.cms.asyn.task.OutNewsGrapTask" id="outNewsGrapTask" />
+	<bean class="com.ytwl.cms.asyn.task.LhRankNewTask" id="LhRankNewTask" />
+	<bean class="com.ytwl.cms.asyn.task.BasicNewsLastMonthTask" id="basicNewsLastMonthTask" />
+	<bean class="com.ytwl.cms.asyn.task.research_report.ResearchReportGrapTask"
+		id="ResearchReportGrapTask" />
+	<bean class="com.ytwl.cms.asyn.task.QuestionAndAnswerTask" id="QuestionAndAnswerTask" />
+	<bean class="com.ytwl.cms.asyn.task.SinaScienceGrapTask" id="sinaScienceGrapTask" />
+	<bean class="com.ytwl.cms.asyn.task.FocusTodayMessageFilterTask"
+		id="focusTodayRecommendRead" />
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapVipYJLX">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapVipYJLX" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/10 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="fidToFocusTodays">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="focusTodayRecommendRead" />
+						<entry key="targetMethod" value="fidToFocusToday" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/20 17-22 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="sinaScienceGrapCronTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="sinaScienceGrapTask" />
+						<entry key="targetMethod" value="grapManager" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 1/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="sinaMeiGuGrapCronTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="sinaScienceGrapTask" />
+						<entry key="targetMethod" value="grapMeiGu" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>30 2/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="sinaGangGuGrapCronTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="sinaScienceGrapTask" />
+						<entry key="targetMethod" value="grapGangGu" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>30 3/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="sinaJiJInGrapCronTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="sinaScienceGrapTask" />
+						<entry key="targetMethod" value="grapSinaJJNews" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 4/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapSZInfo">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="QuestionAndAnswerTask" />
+						<entry key="targetMethod" value="grapSZInfo" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>30 0/6 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapSHInfo">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="QuestionAndAnswerTask" />
+						<entry key="targetMethod" value="grapSHInfo" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 0/6 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapCompanyIndustry">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ResearchReportGrapTask" />
+						<entry key="targetMethod" value="grapCompanyIndustry" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 0/15 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="updateFocusSubjectRedis">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="LhRankNewTask" />
+						<entry key="targetMethod" value="updateFocusSubjectRedis" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="asynNewsToMix">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="basicNewsLastMonthTask" />
+						<entry key="targetMethod" value="startJob" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="yZRankByTopic">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="LhRankNewTask" />
+						<entry key="targetMethod" value="yZRankByTopic" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 18-22 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapGuBa">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="outNewsGrapTask" />
+						<entry key="targetMethod" value="grapGuBa" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapXueQiu">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="outNewsGrapTask" />
+						<entry key="targetMethod" value="grapXueQiu" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>20 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="singleStockLh">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SingleStock" />
+						<entry key="targetMethod" value="filter" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>20 33 17,18 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="updateRankByClear">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SingleStock" />
+						<entry key="targetMethod" value="updateRankByClear" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>20 45 17,18 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="robotTrade">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="RobotTradeTask" />
+						<entry key="targetMethod" value="robotTrade" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>20 02 21 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="updateXtShop">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="updateLhXtShopTask" />
+						<entry key="targetMethod" value="updateXtShop" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 28 0 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapSinaNewData">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapSinaNewData" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/10 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapCJNews">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapCJNews" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapDaVipNews">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapDaVipNews" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grap21New">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grap21New" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grap21Epaper">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grap21Epaper" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 24 1,4,6,8,12,14 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="appGrapFor21CJ">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="appGrapFor21CJ" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="getLeaderForStock">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="dealLhRankHistoryTask" />
+						<entry key="targetMethod" value="getLeaderForStock" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 39 16,17,22 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="addStoreName">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="dealLhRankHistoryTask" />
+						<entry key="targetMethod" value="addStoreName" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 45 23 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="judgeStock">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="lHRankShopTask" />
+						<entry key="targetMethod" value="judgeStock" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 16-21 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealShopData">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="lHRankShopTask" />
+						<entry key="targetMethod" value="dealShopData" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 16-21 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="filterTShop">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="lHRankShopTask" />
+						<entry key="targetMethod" value="filterTShop" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/5 16-21 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="filterXieTongShop">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="lHRankShopTask" />
+						<entry key="targetMethod" value="filterXieTongShop" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+
+			<value>00 33 00 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealZtCount">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="dealZtCount" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 15 16 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealZtYesterday">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="dealZtYesterday" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 20 16 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="moneyFlow">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="moneyFlowTask" />
+						<entry key="targetMethod" value="grapData" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 03 15 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealTopicData">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="moneyFlowTask" />
+						<entry key="targetMethod" value="dealTopicData" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 16 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealAllStock">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="dealAllStock" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 16 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapZtHsl">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapZtHsl" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 30 9 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapZtHslTwo">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapZtHsl" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 10,15 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapZtTopGragon">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapZtTopGragon" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+
+			<value>00 00 17 * * ?</value>
+
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapEverUp">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapEverUp" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 15 * * ?</value>
+
+
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapYesterdayUp">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapYesterdayUp" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 30 9 * * ?</value>
+
+
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapYesterdayUpTwo">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapYesterdayUp" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 15 * * ?</value>
+
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapStop">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapStop" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 15 * * ?</value>
+
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapDown">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="ztDataTask" />
+						<entry key="targetMethod" value="grapDown" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 15 * * ?</value>
+
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+
+
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="publishStock">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="publishToXueQiuTask" />
+						<entry key="targetMethod" value="publishStock" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+
+			<value>00 46 13 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="publishHotTopic">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="publishToXueQiuTask" />
+						<entry key="targetMethod" value="publishHotTopic" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 23 10 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="publishMonster">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="publishToXueQiuTask" />
+						<entry key="targetMethod" value="publishMonster" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 00 20 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="publishEventDrive">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="publishToXueQiuTask" />
+						<entry key="targetMethod" value="publishEventDrive" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>30 42 16 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="publishSubject">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="publishToXueQiuTask" />
+						<entry key="targetMethod" value="publishSubjectToXueQiu" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 0/10 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="publishCmscontent">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="publishToXueQiuTask" />
+						<entry key="targetMethod" value="publishCmscontent" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>20 0/10 * * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="addAllStore">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="dealLhRankHistoryTask" />
+						<entry key="targetMethod" value="addAllStore" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 31 11 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealMainHistory">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="dealLhRankHistoryTask" />
+						<entry key="targetMethod" value="dealMainHistory" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>40 13 15 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="dealHistoryTShop">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="lHRankShopTask" />
+						<entry key="targetMethod" value="dealHistoryTShop" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>00 12 11 * * ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapsSinaDjks">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapsSinaDjks" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 56 10 25 AUG ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapsSinaBkks">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapsSinaBkks" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 44 10 25 AUG ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapsSinaBkgg">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapsSinaBkgg" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 43 10 25 AUG ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapsSinaZqsc">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapsSinaZqsc" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 43 10 25 AUG ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		id="grapsSinaMg">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" />
+				<property name="requestsRecovery" value="true" />
+				<property name="jobClass" value="com.ytwl.cms.quartz.JobDetailBean" />
+				<property name="jobDataAsMap">
+					<map>
+						<entry key="targetObject" value="SinaCjTask" />
+						<entry key="targetMethod" value="grapsSinaMg" />
+					</map>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>50 43 10 25 AUG ?</value>
+		</property>
+		<property name="misfireInstruction" value="2" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="grapVipYJLX" />
+				<ref bean="fidToFocusTodays" />
+				<ref bean="grapCompanyIndustry" />
+				<ref bean="grapSHInfo" />
+				<ref bean="grapSZInfo" />
+				<ref bean="updateRankByClear" />
+				<ref bean="asynNewsToMix" />
+				<ref bean="updateFocusSubjectRedis" />
+				<ref bean="yZRankByTopic" />
+				<ref bean="grapGuBa" />
+				<ref bean="grapXueQiu" />
+				<ref bean="appGrapFor21CJ" />
+				<ref bean="grap21Epaper" />
+				<ref bean="singleStockLh" />
+				<ref bean="robotTrade" />
+				<ref bean="updateXtShop" />
+				<ref bean="grapSinaNewData" />
+				<ref bean="grapCJNews" />
+				<ref bean="grapDaVipNews" />
+				<ref bean="getLeaderForStock" />
+				<ref bean="addStoreName" />
+				<ref bean="judgeStock" />
+				<ref bean="dealShopData" />
+				<ref bean="filterXieTongShop" />
+				<ref bean="filterTShop" />
+				<ref bean="dealZtCount" />
+				<ref bean="dealZtYesterday" />
+				<ref bean="moneyFlow" />
+				<ref bean="dealTopicData" />
+				<ref bean="dealAllStock" />
+				<ref bean="grapZtHsl" />
+				<ref bean="grapZtHslTwo" />
+				<ref bean="grapZtTopGragon" />
+				<ref bean="grapEverUp" />
+				<ref bean="grapYesterdayUp" />
+				<ref bean="grapYesterdayUpTwo" />
+				<ref bean="grapStop" />
+				<ref bean="grapDown" />
+				<ref bean="sinaMeiGuGrapCronTrigger" />
+				<ref bean="sinaScienceGrapCronTrigger" />
+				<ref bean="sinaGangGuGrapCronTrigger" />
+				<ref bean="sinaJiJInGrapCronTrigger" />
+			</list>
+		</property>
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="exposeSchedulerInRepository" value="true" />
+		<property name="autoStartup" value="true" />
+		<property name="startupDelay" value="10" />
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
+		<property name="configLocation"
+			value="classpath:/ytwl-cms-admin-properties/quartz.properties" />
+		<property name="jobFactory">
+			<bean class="com.ytwl.cms.quartz.AutoWiringSpringBeanJobFactory" />
+		</property>
+	</bean>
+</beans>

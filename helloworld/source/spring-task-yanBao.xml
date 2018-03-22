@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>spring-task-yanBao config</description>
+	<!--  luoyi 无特殊需求 -->
+	<!-- 东财研报定时任务 -->
+	<bean id="cmsYanBaoTask" class="com.ytwl.cms.asyn.task.research_report.newsfromyanbao.GetNewsFromYanbao"></bean>
+	
+	<!-- 定时抓东财研报资讯  -->
+	<bean id="cmsYanBaoTaskgrabBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsYanBaoTask" />
+				<property name="targetMethod" value="grab" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 30 0/2 * * ?</value>
+        </property>   
+	</bean> 
+	
+	<!-- 目标价除权定时任务 -->
+	<bean id="cmsYanBaotargetPriceExRightTaskBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsYanBaoTask" />
+				<property name="targetMethod" value="targetPriceExRightTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 5 0 * * ?</value>
+        </property>   
+	</bean> 
+	
+	<!-- 修改研报在三点之后发布的起评价  -->
+	<bean id="cmsYanBaorepairNewsYanbaoPriceTaskBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsYanBaoTask" />
+				<property name="targetMethod" value="repairNewsYanbaoPriceTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 0 8 * * ?</value>
+        </property>   
+	</bean> 
+	
+	<!-- 更新分析师成功率 -->
+	<bean id="cmsYanBaoafterIncreaseTaskBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsYanBaoTask" />
+				<property name="targetMethod" value="afterIncreaseTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 0 9 * * ?</value>
+        </property>   
+	</bean> 
+	
+	<!-- 潜在涨幅缓存  -->
+	<bean id="cmsYanBaoTaskpossibleIncreaseBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsYanBaoTask" />
+				<property name="targetMethod" value="possibleIncrease" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 * 8-16 * * ?</value>
+        </property>   
+	</bean> 
+	
+	<!-- 东财研报 自动写稿 定时任务 -->
+	<bean id="LurkArtifactNewsAutoYanbaoServiceTask" class="com.ytwl.cms.asyn.task.lurk_artifact_news_auto.service.impl.LurkArtifactNewsAutoYanbaoServiceImpl"></bean>
+	<!-- 冷门股自动写稿  -->
+	<bean id="LurkArtifactNewsAutoYanbaoServiceTaskautoSecuCold" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="LurkArtifactNewsAutoYanbaoServiceTask" />
+				<property name="targetMethod" value="autoSecuCold" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 0 4 * * ?</value>
+        </property>   
+	</bean> 
+	<!-- 潜在涨幅自动写稿   -->
+	<bean id="LurkArtifactNewsAutoYanbaoServiceTaskautoPossibleIncrease" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="LurkArtifactNewsAutoYanbaoServiceTask" />
+				<property name="targetMethod" value="autoPossibleIncrease" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 20 0/2 * * ?</value>
+        </property>   
+	</bean> 
+	<!-- 分析师成功率自动写稿 -->
+	<bean id="LurkArtifactNewsAutoYanbaoServiceTaskautoSuccessRate" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="LurkArtifactNewsAutoYanbaoServiceTask" />
+				<property name="targetMethod" value="autoSuccessRate" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+            <value>0 40 0/2 * * ?</value>
+        </property>   
+	</bean> 
+</beans>

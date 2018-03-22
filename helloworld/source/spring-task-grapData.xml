@@ -1,0 +1,931 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	
+	<bean id="publishToXueQiuTask" class="com.ytwl.cms.asyn.task.PublishToXueQiuTask"/>
+	<bean id="ztDataTask" class="com.ytwl.cms.asyn.task.ZtDataTask"/>
+	<bean id="moneyFlowTask" class="com.ytwl.cms.asyn.task.MoneyFlowTask"/>
+	<bean id="rzrqTask" class="com.ytwl.cms.asyn.task.RongQuanTask"/>
+	<bean id="lHRankShopTask" class="com.ytwl.cms.asyn.task.LHRankShopTask"/>
+	<bean id="dealLhRankHistoryTask" class="com.ytwl.cms.asyn.task.DealLhRankHistoryTask"/>
+	<bean id="SinaCjTask" class="com.ytwl.cms.asyn.task.SinaNewsGrapTask"/>
+	<bean id="RobotTradeTask" class="com.ytwl.cms.asyn.task.RobotForIndustryTask"/>
+	<bean id="SingleStock" class="com.ytwl.cms.asyn.task.SingleStockLhRobotTask"/>
+	<bean id="outNewsGrapTask" class="com.ytwl.cms.asyn.task.OutNewsGrapTask"/>
+	<bean id="LhRankNewTask" class="com.ytwl.cms.asyn.task.LhRankNewTask"/>
+	<bean id="basicNewsLastMonthTask" class="com.ytwl.cms.asyn.task.BasicNewsLastMonthTask"/>
+	<bean id="ResearchReportGrapTask" class="com.ytwl.cms.asyn.task.research_report.ResearchReportGrapTask"/>
+	<bean id="QuestionAndAnswerTask" class="com.ytwl.cms.asyn.task.QuestionAndAnswerTask"/>
+	<bean id="sinaScienceGrapTask" class="com.ytwl.cms.asyn.task.SinaScienceGrapTask"/>
+	<bean id="focusTodayRecommendRead" class="com.ytwl.cms.asyn.task.FocusTodayMessageFilterTask"/>
+	
+		<!-- Sina 意见领袖    骆培岩 -->
+	<bean id="grapVipYJLX" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapVipYJLX" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+              <value>00 0/10 * * * ?</value> 
+        </property>   
+	</bean>
+	
+	<!--同步飞笛智投公号内容到今日必知  骆培岩-->
+	<bean id="fidToFocusTodays" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="focusTodayRecommendRead" />
+				<property name="targetMethod" value="fidToFocusToday" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/20 17-22 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--杨锋 1 Sina 新浪科技-->
+	<bean id="sinaScienceGrapCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="sinaScienceGrapTask" />
+				<property name="targetMethod" value="grapManager" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 1/5 * * * ?</value>
+        </property>   
+	</bean>
+	 <!--杨锋 2  新浪美股 -->
+	<bean id="sinaMeiGuGrapCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="sinaScienceGrapTask" />
+				<property name="targetMethod" value="grapMeiGu" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>30 2/5 * * * ?</value>
+        </property>   
+	</bean>
+	<!--杨锋 3  新浪港股 -->
+	<bean id="sinaGangGuGrapCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="sinaScienceGrapTask" />
+				<property name="targetMethod" value="grapGangGu" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>30 3/5 * * * ?</value>
+        </property>   
+	</bean>
+
+	<!--杨锋 4   新浪基金 -->
+	<bean id="sinaJiJInGrapCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="sinaScienceGrapTask" />
+				<property name="targetMethod" value="grapSinaJJNews" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 4/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 深交所 问答 骆培岩-->
+	<bean id="grapSZInfo" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="QuestionAndAnswerTask" />
+				<property name="targetMethod" value="grapSZInfo" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>30 0/6 * * * ?</value>
+        </property>   
+	</bean>
+	<!-- 上交所 问答 骆培岩-->
+	<bean id="grapSHInfo" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="QuestionAndAnswerTask" />
+				<property name="targetMethod" value="grapSHInfo" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 0/6 * * * ?</value>
+        </property>   
+	</bean>
+	<!-- 研报抓取 骆培岩-->
+	<bean id="grapCompanyIndustry" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ResearchReportGrapTask" />
+				<property name="targetMethod" value="grapCompanyIndustry" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 0/15 * * * ?</value>
+        </property>   
+	</bean>
+	<!-- 行业研报历史数据 
+	<bean id="grapIndustry" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ResearchReportGrapTask" />
+				<property name="targetMethod" value="grapIndustry" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 10 16 13 NOV ?</value>
+        </property>   
+	</bean>-->
+	
+	<!-- 骆培岩 -->
+	<bean id="updateFocusSubjectRedis" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="LhRankNewTask" />
+				<property name="targetMethod" value="updateFocusSubjectRedis" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 骆培岩 -->
+	<bean id="asynNewsToMix" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="basicNewsLastMonthTask" />
+				<property name="targetMethod" value="startJob" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 骆培岩 -->
+	<bean id="yZRankByTopic" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="LhRankNewTask" />
+				<property name="targetMethod" value="yZRankByTopic" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 18-22 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- guba 骆培岩 -->
+	<bean id="grapGuBa" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="outNewsGrapTask" />
+				<property name="targetMethod" value="grapGuBa" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--xueqiu 骆培岩 -->
+	<bean id="grapXueQiu" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="outNewsGrapTask" />
+				<property name="targetMethod" value="grapXueQiu" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>20 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 个股追踪龙虎榜数据写稿  骆培岩-->
+	<bean id="singleStockLh" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SingleStock" />
+				<property name="targetMethod" value="filter" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>20 33 17,18 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 骆培岩 -->
+	<bean id="updateRankByClear" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SingleStock" />
+				<property name="targetMethod" value="updateRankByClear" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>20 45 17,18 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 行业数据写稿  luopeiyan-->
+	<bean id="robotTrade" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="RobotTradeTask" />
+				<property name="targetMethod" value="robotTrade" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>20 02 21 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- luopeiyan -->
+	<bean id="updateXtShop" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="updateLhXtShopTask" />
+				<property name="targetMethod" value="updateXtShop" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 28 0 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- Sina 板块个股，美股，独家看市，博客看市，证券市场  luopeiyan -->
+	<bean id="grapSinaNewData" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapSinaNewData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+              <value>00 0/10 * * * ?</value> 
+        </property>   
+	</bean>
+	
+	<!--Sina 产经新闻   luopeiyan-->
+	<bean id="grapCJNews" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapCJNews" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--Sina 抓取新浪 大V专栏资讯   luopeiyan-->
+	<bean id="grapDaVipNews" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapDaVipNews" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	
+	
+	<!--21世纪经济报道  luopeiyan-->
+	<bean id="grap21New" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grap21New" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--21世纪经济报道 数字报  luopeiyan-->
+	<bean id="grap21Epaper" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grap21Epaper" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 24 1,4,6,8,12,14 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--21世纪经济报道  app  luopeiyan-->
+	<bean id="appGrapFor21CJ" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="appGrapFor21CJ" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--龙虎榜 个股的代表人物   luopeiyan-->
+	<bean id="getLeaderForStock" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="dealLhRankHistoryTask" />
+				<property name="targetMethod" value="getLeaderForStock" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 39 16,17,22 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--龙虎榜 将每日出现的营业部入库   luopeiyan-->
+	<bean id="addStoreName" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="dealLhRankHistoryTask" />
+				<property name="targetMethod" value="addStoreName" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 45 23 * * ?</value>
+        </property>   
+	</bean>
+	
+	
+	<!--龙虎榜 个股一月上榜次数以及净额 luopeiyan-->
+	<bean id="judgeStock" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="lHRankShopTask" />
+				<property name="targetMethod" value="judgeStock" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 16-21 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--龙虎榜 营业部上榜次数以及是否出局  luopeiyan -->
+	<bean id="dealShopData" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="lHRankShopTask" />
+				<property name="targetMethod" value="dealShopData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 16-21 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--龙虎榜 做T营业部  luopeiyan -->
+	<bean id="filterTShop" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="lHRankShopTask" />
+				<property name="targetMethod" value="filterTShop" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/5 16-21 * * ?</value>      
+        </property>   
+	</bean>
+	
+	<!--龙虎榜 协同营业部  luopeiyan-->
+	<bean id="filterXieTongShop" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="lHRankShopTask" />
+				<property name="targetMethod" value="filterXieTongShop" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+               <!--  <value>30 53 17 ? * SUN</value>-->
+                <value>00 33 00 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--涨停分析 当日 涨停数据统计 luopeiyan-->
+	<bean id="dealZtCount" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="dealZtCount" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 15 16 * * ?</value>
+        </property>   
+	</bean>
+	<!--涨停分析   昨日 涨停数据统计  luopeiyan -->
+	<bean id="dealZtYesterday" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="dealZtYesterday" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 20 16 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 资金流向抓取   luopeiyan-->
+	<bean id="moneyFlow" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="moneyFlowTask" />
+				<property name="targetMethod" value="grapData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 03 15 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 资金流向 主题相关数据  luopeiyan-->
+	<bean id="dealTopicData" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="moneyFlowTask" />
+				<property name="targetMethod" value="dealTopicData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 00 16 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- luopeiyan -->
+	<bean id="dealAllStock" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="dealAllStock" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 00 16 * * ?</value>
+        </property>   
+	</bean>
+	
+	
+	<!--  问财网-涨停振幅换手率行业流通市值  luopeiyan--> 
+	<bean id="grapZtHsl" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapZtHsl" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 30 9 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--  问财网-涨停振幅换手率行业流通市值  luopeiyan--> 
+	<bean id="grapZtHslTwo" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapZtHsl" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+            <value>00 00 10,15 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--  问财网-涨停龙虎榜  luopeiyan--> 
+	<bean id="grapZtTopGragon" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapZtTopGragon" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+              
+                <value>00 00 17 * * ?</value>
+              
+        </property>   
+	</bean>
+	
+	<!--  问财网-曾涨停   luopeiyan--> 
+	<bean id="grapEverUp" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapEverUp" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+               <value>00 00 15 * * ?</value>
+             
+            
+        </property>   
+	</bean>
+
+	<!--  问财网-昨日涨停  luopeiyan --> 
+	<bean id="grapYesterdayUp" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapYesterdayUp" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 30 9 * * ?</value>
+             <!--  <value>00 00 15 * * ?</value>  -->
+              
+        </property>   
+	</bean>
+	
+	<!--  问财网-昨日涨停  luopeiyan --> 
+	<bean id="grapYesterdayUpTwo" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapYesterdayUp" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+              <value>00 00 15 * * ?</value> 
+              
+        </property>   
+	</bean>
+
+<!--  问财网-停牌 luopeiyan--> 
+	<bean id="grapStop" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapStop" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+              <value>00 00 15 * * ?</value>
+              
+        </property>   
+	</bean>
+
+<!--  问财网-跌停 luopeiyan--> 
+	<bean id="grapDown" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="ztDataTask" />
+				<property name="targetMethod" value="grapDown" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+            <value>00 00 15 * * ?</value> 
+           
+        </property>   
+	</bean>
+
+
+
+
+
+
+	<!-- 已废弃 -->
+	<!--  雪球自动发帖  个股追踪 --> 
+	<bean id="publishStock" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="publishToXueQiuTask" />
+				<property name="targetMethod" value="publishStock" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           
+             <value>00 46 13 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 已废弃 -->
+	<!--  雪球自动发帖  热门主题 --> 
+	<bean id="publishHotTopic" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="publishToXueQiuTask" />
+				<property name="targetMethod" value="publishHotTopic" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 23 10 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 已废弃 -->
+	<!--  雪球自动发帖  妖股 --> 
+	<bean id="publishMonster" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="publishToXueQiuTask" />
+				<property name="targetMethod" value="publishMonster" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 00 20 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 已废弃 -->
+	<!--  雪球自动发帖  事件驱动 --> 
+	<bean id="publishEventDrive" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="publishToXueQiuTask" />
+				<property name="targetMethod" value="publishEventDrive" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>30 42 16 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 已废弃 -->
+	<!--  雪球自动发帖 必知专题 --> 
+	<bean id="publishSubject" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="publishToXueQiuTask" />
+				<property name="targetMethod" value="publishSubjectToXueQiu" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>00 0/10 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 已废弃 -->
+	<!--  雪球自动发帖 必知专题 --> 
+	<bean id="publishCmscontent" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="publishToXueQiuTask" />
+				<property name="targetMethod" value="publishCmscontent" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>20 0/10 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- ****************************历史数据********************************************* -->
+	
+		<!--龙虎榜 将历史所有出现的营业部入库 -->
+		<bean id="addAllStore" class="org.springframework.scheduling.quartz.CronTriggerBean">
+			<property name="jobDetail">
+				<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+					<property name="targetObject" ref="dealLhRankHistoryTask" />
+					<property name="targetMethod" value="addAllStore" />
+					<property name="concurrent" value="false" />
+				</bean>
+			</property>
+			<property name="cronExpression">   
+	             <value>50 31 11 * * ?</value>
+	        </property>   
+		</bean>
+		
+		<!--龙虎榜  历史所有上榜的个股的净额以及上榜次数 -->
+		<bean id="dealMainHistory" class="org.springframework.scheduling.quartz.CronTriggerBean">
+			<property name="jobDetail">
+				<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+					<property name="targetObject" ref="dealLhRankHistoryTask" />
+					<property name="targetMethod" value="dealMainHistory" />
+					<property name="concurrent" value="false" />
+				</bean>
+			</property>
+			<property name="cronExpression">   
+	             <value>40 13 15 * * ?</value>
+	        </property>   
+		</bean>
+		
+			<!--龙虎榜  历史所有上榜的做T营业部 -->
+		<bean id="dealHistoryTShop" class="org.springframework.scheduling.quartz.CronTriggerBean">
+			<property name="jobDetail">
+				<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+					<property name="targetObject" ref="lHRankShopTask" />
+					<property name="targetMethod" value="dealHistoryTShop" />
+					<property name="concurrent" value="false" />
+				</bean>
+			</property>
+			<property name="cronExpression">   
+	             <value>00 12 11 * * ?</value>
+	        </property>   
+		</bean>
+		
+		<!-- 抓取新浪历史资讯数据 -->
+		<bean id="grapsSinaDjks" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapsSinaDjks" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 56 10 25 AUG ?</value>
+        </property>   
+	</bean>
+	
+	<bean id="grapsSinaBkks" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapsSinaBkks" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 44 10 25 AUG ?</value>
+        </property>   
+	</bean>
+	
+	<bean id="grapsSinaBkgg" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapsSinaBkgg" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 43 10 25 AUG ?</value>
+        </property>   
+	</bean>
+	
+	<bean id="grapsSinaZqsc" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapsSinaZqsc" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 43 10 25 AUG ?</value>
+        </property>   
+	</bean>
+	
+	<bean id="grapsSinaMg" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="SinaCjTask" />
+				<property name="targetMethod" value="grapsSinaMg" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>50 43 10 25 AUG ?</value>
+        </property>   
+	</bean>
+		
+	<!-- ****************************历史数据********************************************* -->
+	
+	<!--注册定时任务-->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<property name="triggers">  
+            <list>
+              	<ref bean="grapVipYJLX" /> 
+            	<ref bean="fidToFocusTodays" /> 
+				<ref bean="grapCompanyIndustry" /> 
+            	<ref bean="grapSHInfo" />
+            	<ref bean="grapSZInfo" />
+            	<ref bean="updateRankByClear" /> 
+            	<ref bean="asynNewsToMix" /> 
+            	<ref bean="updateFocusSubjectRedis" /> 
+            	<ref bean="yZRankByTopic" /> 
+            	<ref bean="grapGuBa" /> 
+            	<ref bean="grapXueQiu" />  
+            	<ref bean="appGrapFor21CJ" />   
+            	<ref bean="grap21Epaper" />
+            	<ref bean="singleStockLh" /> 
+           		<ref bean="robotTrade" />	
+           		<ref bean="updateXtShop" />	
+            	<ref bean="grapSinaNewData" />
+            	<ref bean="grapCJNews" />
+            	<ref bean="grapDaVipNews" /> 
+            	<ref bean="getLeaderForStock" />
+            	<ref bean="addStoreName" />
+            	<ref bean="judgeStock" />
+            	<ref bean="dealShopData" />
+            	<ref bean="filterXieTongShop" />
+				<ref bean="filterTShop" />			  
+				<ref bean="dealZtCount" />
+				<ref bean="dealZtYesterday" />
+				<ref bean="moneyFlow" />
+				<ref bean="dealTopicData" />	
+				<ref bean="dealAllStock" />	
+				<ref bean="grapZtHsl" />
+				<ref bean="grapZtHslTwo" />		
+				<ref bean="grapZtTopGragon" />
+				<ref bean="grapEverUp" />	
+				<ref bean="grapYesterdayUp" />
+				<ref bean="grapYesterdayUpTwo" />	
+				<ref bean="grapStop" />
+				<ref bean="grapDown" />
+				<ref bean="sinaMeiGuGrapCronTrigger" />
+            	<ref bean="sinaScienceGrapCronTrigger" />
+            	<ref bean="sinaGangGuGrapCronTrigger" />
+            	<ref bean="sinaJiJInGrapCronTrigger" />
+				<!-- 历史数据
+            	新浪：
+            	
+            	<ref bean="grapsSinaDjks" />
+            	<ref bean="grapsSinaBkks" />
+            	<ref bean="grapsSinaBkgg" />
+            	<ref bean="grapsSinaZqsc" />
+            	<ref bean="grapsSinaMg" />
+           
+            	龙虎榜：
+           		<ref bean="dealMainHistory" />
+  				<ref bean="dealHistoryTShop" />
+  				<ref bean="addAllStore" /> 只跑一次 
+  				-->
+  				<!-- 雪球自动发帖 -->
+  				<!-- 
+  				
+  				<ref bean="publishStock" />
+				<ref bean="publishHotTopic" />
+				<ref bean="publishMonster" />
+				<ref bean="publishCmscontent" />
+				<ref bean="publishSubject" />
+  				 -->
+			</list>  
+		</property>  
+	</bean>
+</beans>

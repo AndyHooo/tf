@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>spring-task-latentHallowsTask config</description>
+
+	<!-- 打板神器定时任务 author：beckshwang -->
+	<bean id="DbLatentHallowsTask" class="com.ytwl.cms.asyn.task.latentHallows.DbLatentHallowsTask"></bean>
+	
+	<task:scheduler id="DbLatentHallowsTaskScheduler"
+		pool-size="15" />
+
+	<task:scheduled-tasks scheduler="DbLatentHallowsTaskScheduler">
+		<!-- 收盘以后统计各涨跌幅区间股票数量 下午3点0分 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="statisticsAStockZdfAfterClosing"
+			cron="0 4 15 * * MON-FRI" />
+		<!-- 实时统计各涨跌幅区间股票数量 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="statisticsAStockZdfRealTime"
+			cron="0/30 * 9-15 * * MON-FRI" />
+		<!-- 收盘以后，算出第二天的涨停涨跌幅,跌停涨跌幅等于负的涨停涨跌幅	下午四点 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="calculateAStockZdfAfterClosing"
+			cron="0 0 16 * * MON-FRI" />
+		<!-- 实时计算赚钱指数 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="calculateMakeMoneyRealtime"
+			cron="0/30 * 9-15 * * MON-FRI" />
+		<!-- 抓取未开板的股票 每天下午四点更新 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="cralwerWkbStock"
+			cron="0 0 16 * * MON-FRI" />
+		<!-- 更新股票池 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="updateHqStockCodeListAll"
+			cron="0 0 1,12 * * MON-FRI" />
+		<!-- 主题展示实时定时任务 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="topicShowRealtime"
+			cron="0/30 * 9-15 * * MON-FRI" />
+		<!-- 收盘以后主题展示保存历史记录 下午3点0分 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="topicShowAfterClosing"
+			cron="0 3 15 * * MON-FRI" />
+		<!-- 记录股票次日高低开状态 早上9:30:00开始任务 -->
+		<task:scheduled ref="DbLatentHallowsTask" method="recordStockStatusRecord"
+			cron="01 30 9 * * MON-FRI" />
+	
+	</task:scheduled-tasks>
+
+</beans>
